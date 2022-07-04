@@ -29,8 +29,9 @@ describe("GET /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
-      .then(({ body: { topic } }) => {
-        topic.forEach((topic) => {
+      .then(({ body: { topics } }) => {
+        expect(topics.length).toBe(3);
+        topics.forEach((topic) => {
           expect(topic).toHaveProperty("slug");
           expect(topic).toHaveProperty("description");
         });
@@ -45,26 +46,36 @@ describe("GET /api/articles/:article_id", () => {
         .get("/api/articles/1")
         .expect(200)
         .then(({ body: { article } }) => {
-          article.forEach((article) => {
-            expect(article).toHaveProperty("author");
-            expect(article).toHaveProperty("title");
-            expect(article).toHaveProperty("article_id");
-            expect(article).toHaveProperty("body");
-            expect(article).toHaveProperty("topic");
-            expect(article).toHaveProperty("created_at");
-            expect(article).toHaveProperty("votes");
-          });
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 100,
+            })
+          );
         });
     });
   });
-  describe("SAD PATHS - ERROR HANDLING", () => {
-    test("responds with 204 if article_id does not exist", () => {
+  describe("SAD PATHS", () => {
+    test("responds with 404 if article_id does not exist", () => {
       return request(app)
         .get("/api/articles/42")
-        .expect(204)
+        .expect(404)
         .then(({ body: { message } }) => {
           console.log(message);
-          expect(message).toBe("204 - Article not found");
+          expect(message).toBe("404 - Article not found");
+        });
+    });
+    test("responds with 400 if article_id is not a number", () => {
+      return request(app)
+        .get("/api/articles/notanumber")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("400 - Bad request");
         });
     });
   });

@@ -12,11 +12,11 @@ exports.fetchArticle = (article_id) => {
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({
-          status: 204,
-          message: "204 - Article not found",
+          status: 404,
+          message: "404 - Article not found",
         });
       } else {
-        return rows;
+        return rows[0];
       }
     });
 };

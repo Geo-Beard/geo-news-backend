@@ -37,3 +37,35 @@ describe("GET /api/topics", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id", () => {
+  describe("HAPPY PATHS", () => {
+    test("responds with an article object which has the properties: author, title, article_id, body, topic, created_at, votes", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body: { article } }) => {
+          article.forEach((article) => {
+            expect(article).toHaveProperty("author");
+            expect(article).toHaveProperty("title");
+            expect(article).toHaveProperty("article_id");
+            expect(article).toHaveProperty("body");
+            expect(article).toHaveProperty("topic");
+            expect(article).toHaveProperty("created_at");
+            expect(article).toHaveProperty("votes");
+          });
+        });
+    });
+  });
+  describe("SAD PATHS - ERROR HANDLING", () => {
+    test("responds with 204 if article_id does not exist", () => {
+      return request(app)
+        .get("/api/articles/42")
+        .expect(204)
+        .then(({ body: { message } }) => {
+          console.log(message);
+          expect(message).toBe("204 - Article not found");
+        });
+    });
+  });
+});

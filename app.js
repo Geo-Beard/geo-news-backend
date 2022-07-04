@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
-const { getTopics } = require("./controllers/index");
+const { getTopics, getArticle } = require("./controllers/index");
 
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
+
+app.get("/api/articles/:article_id", getArticle);
 
 //ERROR HANDLING
 
@@ -16,6 +18,14 @@ app.use("*", (req, res) => {
 //PSQL errors
 
 //Custom errors
+
+app.use((err, req, res, next) => {
+  if (err.status && err.message) {
+    res.status(err.status).send({ message: `${err.message}` });
+  } else {
+    next(err);
+  }
+});
 
 //Server errors
 app.use((err, req, res, next) => {

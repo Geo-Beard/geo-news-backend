@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
-const { getTopics } = require("./controllers/index");
+const { getTopics, getArticle } = require("./controllers/index");
 
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
+
+app.get("/api/articles/:article_id", getArticle);
 
 //ERROR HANDLING
 
@@ -15,7 +17,24 @@ app.use("*", (req, res) => {
 
 //PSQL errors
 
+app.use((err, req, res, next) => {
+  if (err.code === "22P02") {
+    res.status(400).send({ message: "400 - Bad request" });
+  }
+  next(err);
+});
+
 //Custom errors
+
+app.use((err, req, res, next) => {
+  if (err.status && err.message) {
+    console.log(err.status);
+    console.log(err.message);
+    res.status(err.status).send({ message: `${err.message}` });
+  } else {
+    next(err);
+  }
+});
 
 //Server errors
 app.use((err, req, res, next) => {

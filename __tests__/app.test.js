@@ -25,17 +25,19 @@ describe("GENERAL ERROR HANDLING", () => {
 });
 
 describe("GET /api/topics", () => {
-  test("responds with an array of topic objects each of which should have the properties slug and description", () => {
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then(({ body: { topics } }) => {
-        expect(topics.length).toBe(3);
-        topics.forEach((topic) => {
-          expect(topic).toHaveProperty("slug");
-          expect(topic).toHaveProperty("description");
+  describe("HAPPY PATHS", () => {
+    test("responds with an array of topic objects each of which should have the properties slug and description", () => {
+      return request(app)
+        .get("/api/topics")
+        .expect(200)
+        .then(({ body: { topics } }) => {
+          expect(topics.length).toBe(3);
+          topics.forEach((topic) => {
+            expect(topic).toHaveProperty("slug");
+            expect(topic).toHaveProperty("description");
+          });
         });
-      });
+    });
   });
 });
 
@@ -152,6 +154,24 @@ describe("PATCH /api/articles/:article_id", () => {
         .send(newVote)
         .then(({ body: { message } }) => {
           expect(message).toBe("400 - Bad request");
+        });
+    });
+  });
+});
+
+describe("GET /api/users", () => {
+  describe("HAPPY PATHS", () => {
+    test("responds with an array of objects, each object has the following properties: username, name, avatar_url", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          expect(users.length).toBe(4);
+          users.forEach((user) => {
+            expect(user).toHaveProperty("username");
+            expect(user).toHaveProperty("name");
+            expect(user).toHaveProperty("avatar_url");
+          });
         });
     });
   });

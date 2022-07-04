@@ -1,12 +1,14 @@
 const express = require("express");
 const app = express();
-const { getTopics, getArticle } = require("./controllers/index");
+const { getTopics, getArticle, patchArticle } = require("./controllers/index");
 
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticle);
+
+app.patch("/api/articles/:article_id", patchArticle);
 
 //ERROR HANDLING
 
@@ -28,8 +30,6 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
   if (err.status && err.message) {
-    console.log(err.status);
-    console.log(err.message);
     res.status(err.status).send({ message: `${err.message}` });
   } else {
     next(err);

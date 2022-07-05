@@ -7,6 +7,7 @@ const {
   getUsers,
   getAllArticles,
   getArticleComments,
+  postArticleComment,
 } = require("./controllers/index");
 
 app.use(express.json());
@@ -23,6 +24,8 @@ app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id/comments", getArticleComments);
 
+app.post("/api/articles/:article_id/comments", postArticleComment);
+
 //ERROR HANDLING
 
 //Pathing errors
@@ -33,7 +36,7 @@ app.use("*", (req, res) => {
 //PSQL errors
 
 app.use((err, req, res, next) => {
-  if (err.code === "22P02") {
+  if (err.code === "22P02" || err.code === "23502") {
     res.status(400).send({ message: "400 - Bad request" });
   }
   next(err);

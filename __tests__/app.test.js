@@ -225,12 +225,12 @@ describe("GET /api/articles/:article_id/comments", () => {
           });
         });
     });
-    test("responds with 200 - No comments, if article_id exists but it doesn't have any comments associated with it yet", () => {
+    test("responds with 200, if article_id exists but it doesn't have any comments associated with it yet", () => {
       return request(app)
         .get("/api/articles/2/comments")
         .expect(200)
-        .then(({ body: { message } }) => {
-          expect(message).toBe("200 - No comments found");
+        .then(({ body: { comments } }) => {
+          expect(comments).toEqual([]);
         });
     });
   });
@@ -241,6 +241,74 @@ describe("GET /api/articles/:article_id/comments", () => {
         .expect(404)
         .then(({ body: { message } }) => {
           expect(message).toBe("404 - Article not found");
+        });
+    });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  describe("HAPPY PATHS", () => {
+    test("posts a new comment to corresponding article_id, request accepts object with body and username properties, and responds with the posted comment", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .expect(201)
+        .send(newComment)
+        .then(({ body: { comment } }) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              article_id: expect.any(Number),
+            })
+          );
+        });
+    });
+  });
+  describe("SAD PATHS", () => {
+    test("responds with 404 if article_id does not exist", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/articles/42/comments")
+        .expect(404)
+        .send(newComment)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("404 - Article not found");
+        });
+    });
+    test("responds with 400 - Bad request if POST is in wrong format", () => {
+      const newComment = {
+        user: "butter_bridge",
+        body_content: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .expect(400)
+        .send(newComment)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("400 - Bad request");
+        });
+    });
+    test("responds with 400 - User not found, if username does not exist", () => {
+      const newComment = {
+        username: "unknown_user",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .expect(400)
+        .send(newComment)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("400 - User not found");
         });
     });
   });

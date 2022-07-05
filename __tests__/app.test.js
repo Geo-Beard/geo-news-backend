@@ -260,12 +260,12 @@ describe("POST /api/articles/:article_id/comments", () => {
         .then(({ body: { comment } }) => {
           expect(comment).toEqual(
             expect.objectContaining({
-              comment_id: expect.any(Number),
-              votes: expect.any(Number),
+              comment_id: 19,
+              body: "This is a new comment",
+              article_id: 1,
+              author: "butter_bridge",
+              votes: 0,
               created_at: expect.any(String),
-              author: expect.any(String),
-              body: expect.any(String),
-              article_id: expect.any(Number),
             })
           );
         });
@@ -309,6 +309,14 @@ describe("POST /api/articles/:article_id/comments", () => {
         .send(newComment)
         .then(({ body: { message } }) => {
           expect(message).toBe("400 - User not found");
+        });
+    });
+    test("responds with 400 if article_id is not a number", () => {
+      return request(app)
+        .post("/api/articles/notanumber/comments")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("400 - Bad request");
         });
     });
   });

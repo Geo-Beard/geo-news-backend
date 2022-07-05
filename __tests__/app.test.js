@@ -43,7 +43,7 @@ describe("GET /api/topics", () => {
 
 describe("GET /api/articles/:article_id", () => {
   describe("HAPPY PATHS", () => {
-    test("responds with an article object which has the properties: author, title, article_id, body, topic, created_at, votes", () => {
+    test("responds with an article object which has the properties: author, title, article_id, body, topic, created_at, votes - and comment count", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -57,6 +57,7 @@ describe("GET /api/articles/:article_id", () => {
               body: "I find this existence challenging",
               created_at: "2020-07-09T20:11:00.000Z",
               votes: 100,
+              comment_count: 11,
             })
           );
         });

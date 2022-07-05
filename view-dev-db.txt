@@ -1,0 +1,6 @@
+You are now connected to database "nc_news" as user "simon".
+ article_id |       title        | topic  |  author   |                                                                                                            body                                                                                                            |     created_at      | votes | comment_count 
+------------+--------------------+--------+-----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+-------+---------------
+          1 | Running a Node App | coding | jessjelly | This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment. | 2020-11-07 06:03:00 |     0 |             8
+(1 row)
+

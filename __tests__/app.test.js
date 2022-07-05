@@ -177,3 +177,29 @@ describe("GET /api/users", () => {
     });
   });
 });
+
+describe("GET /api/articles", () => {
+  describe("HAPPY PATHS", () => {
+    test("responds with an array of objects, each object has the following properties: author, title, article_id, topic, created_at, votes, comment_count - sorted by date in descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(12);
+          expect(articles).toBeSortedBy("created_at", {
+            descending: true,
+            coerce: false,
+          });
+          articles.forEach((article) => {
+            expect(article).toHaveProperty("author");
+            expect(article).toHaveProperty("title");
+            expect(article).toHaveProperty("article_id");
+            expect(article).toHaveProperty("topic");
+            expect(article).toHaveProperty("created_at");
+            expect(article).toHaveProperty("votes");
+            expect(article).toHaveProperty("comment_count");
+          });
+        });
+    });
+  });
+});

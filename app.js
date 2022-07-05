@@ -5,6 +5,7 @@ const {
   getArticle,
   patchArticle,
   getUsers,
+  getAllArticles,
 } = require("./controllers/index");
 
 app.use(express.json());
@@ -16,6 +17,8 @@ app.get("/api/articles/:article_id", getArticle);
 app.patch("/api/articles/:article_id", patchArticle);
 
 app.get("/api/users", getUsers);
+
+app.get("/api/articles", getAllArticles);
 
 //ERROR HANDLING
 

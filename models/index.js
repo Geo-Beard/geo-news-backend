@@ -80,13 +80,46 @@ exports.fetchArticleComments = (article_id) => {
             [article_id]
           )
           .then(({ rows }) => {
+            return rows;
+          });
+      }
+    });
+};
+
+exports.createArticleComment = (article_id, newComment) => {
+  const { username, body } = newComment;
+  if (username === undefined || body === undefined) {
+    return Promise.reject({
+      status: 400,
+      message: "400 - Bad request",
+    });
+  }
+  return db
+    .query("SELECT * FROM articles WHERE article_id=$1;", [article_id])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "404 - Article not found",
+        });
+      } else {
+        return db
+          .query("SELECT * FROM users WHERE username=$1;", [username])
+          .then(({ rows }) => {
             if (rows.length === 0) {
               return Promise.reject({
-                status: 200,
-                message: "200 - No comments found",
+                status: 400,
+                message: "400 - User not found",
               });
             } else {
-              return rows;
+              return db
+                .query(
+                  "INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;",
+                  [username, body, article_id]
+                )
+                .then(({ rows }) => {
+                  return rows[0];
+                });
             }
           });
       }

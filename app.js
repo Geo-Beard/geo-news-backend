@@ -6,6 +6,7 @@ const {
   patchArticle,
   getUsers,
   getAllArticles,
+  getArticleComments,
 } = require("./controllers/index");
 
 app.use(express.json());
@@ -19,6 +20,8 @@ app.patch("/api/articles/:article_id", patchArticle);
 app.get("/api/users", getUsers);
 
 app.get("/api/articles", getAllArticles);
+
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 //ERROR HANDLING
 

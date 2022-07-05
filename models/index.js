@@ -63,3 +63,32 @@ exports.fetchAllArticles = () => {
       return rows;
     });
 };
+
+exports.fetchArticleComments = (article_id) => {
+  return db
+    .query("SELECT * FROM articles WHERE article_id=$1;", [article_id])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "404 - Article not found",
+        });
+      } else {
+        return db
+          .query(
+            "SELECT author, body, comment_id, created_at, votes FROM comments WHERE article_id=$1;",
+            [article_id]
+          )
+          .then(({ rows }) => {
+            if (rows.length === 0) {
+              return Promise.reject({
+                status: 200,
+                message: "200 - No comments found",
+              });
+            } else {
+              return rows;
+            }
+          });
+      }
+    });
+};

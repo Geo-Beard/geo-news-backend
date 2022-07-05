@@ -203,3 +203,45 @@ describe("GET /api/articles", () => {
     });
   });
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+  describe("HAPPY PATHS", () => {
+    test("responds with an array of comment objects for given article_id, each object has the following properties: comment_id, votes, created_at, author, body", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments.length).toBe(11);
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("responds with 200 - No comments, if article_id exists but it doesn't have any comments associated with it yet", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("200 - No comments found");
+        });
+    });
+  });
+  describe("SAD PATHS", () => {
+    test("responds with 404 if article_id does not exist", () => {
+      return request(app)
+        .get("/api/articles/42/comments")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("404 - Article not found");
+        });
+    });
+  });
+});

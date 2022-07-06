@@ -54,14 +54,53 @@ exports.fetchUsers = () => {
   });
 };
 
-exports.fetchAllArticles = () => {
-  return db
-    .query(
-      "SELECT articles.*, COUNT(comments.article_id)::int AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id, comments.article_id ORDER BY created_at DESC;"
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.fetchAllArticles = (sort_by = "created_at", order = "desc", topic) => {
+  const validSortOptions = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
+  const validOrderOptions = ["asc", "desc"];
+  if (
+    !validSortOptions.includes(sort_by) ||
+    !validOrderOptions.includes(order)
+  ) {
+    return Promise.reject({ status: 400, message: "400 - Invalid query" });
+  }
+
+  const queryValues = [];
+  let queryStr = `SELECT articles.*, COUNT(comments.article_id)::int AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`;
+
+  if (topic) {
+    queryValues.push(topic);
+    queryStr += " WHERE articles.topic=$1";
+  }
+
+  queryStr += ` GROUP BY articles.article_id, comments.article_id ORDER BY ${sort_by} ${order};`;
+
+  return db.query(queryStr, queryValues).then(({ rows }) => {
+    const articleRows = rows;
+    //if no articles but topic - no articles returned but topic
+    if (articleRows.length === 0 && topic) {
+      return db
+        .query("SELECT * FROM topics WHERE slug=$1", [topic])
+        .then(({ rows }) => {
+          const topicRows = rows;
+          if (topicRows[0]) {
+            return articleRows;
+          }
+          return Promise.reject({
+            status: 400,
+            message: "400 - Invalid topic",
+          });
+        });
+    }
+    return rows;
+  });
 };
 
 exports.fetchArticleComments = (article_id) => {

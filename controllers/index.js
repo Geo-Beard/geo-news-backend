@@ -6,6 +6,7 @@ const {
   fetchAllArticles,
   fetchArticleComments,
   createArticleComment,
+  checkTopicExists,
 } = require("../models/index");
 
 exports.getTopics = (req, res, next) => {
@@ -52,7 +53,8 @@ exports.getUsers = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  fetchAllArticles()
+  const { sort_by, order, topic } = req.query;
+  fetchAllArticles(sort_by, order, topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })

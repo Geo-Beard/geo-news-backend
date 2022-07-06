@@ -195,10 +195,133 @@ describe("GET /api/articles", () => {
             expect(article).toHaveProperty("title");
             expect(article).toHaveProperty("article_id");
             expect(article).toHaveProperty("topic");
+            expect(article).toHaveProperty("body");
             expect(article).toHaveProperty("created_at");
             expect(article).toHaveProperty("votes");
             expect(article).toHaveProperty("comment_count");
           });
+        });
+    });
+    test("returns default query options sort_by=created_at, order=desc, and topic=undefined (filter)", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ sort_by: undefined, order: undefined, topic: undefined })
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(12);
+          expect(articles).toBeSortedBy("created_at", {
+            descending: true,
+            coerce: false,
+          });
+          articles.forEach(() => {
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            });
+          });
+        });
+    });
+    test("returns 200 for valid sort_by and order options, with undefined topic", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ sort_by: "article_id", order: "asc", topic: undefined })
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(12);
+          expect(articles).toBeSortedBy("article_id", {
+            ascending: true,
+            coerce: false,
+          });
+          articles.forEach(() => {
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            });
+          });
+        });
+    });
+    test("returns 200 for valid topic, with default sort_by and order", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ sort_by: undefined, order: undefined, topic: "mitch" })
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(11);
+          expect(articles).toBeSortedBy("created_at", {
+            descending: true,
+            coerce: false,
+          });
+          articles.forEach(() => {
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            });
+          });
+        });
+    });
+    test("returns 200 for valid topic, but no articles exist for it, custom sort_by and order", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ sort_by: "article_id", order: "asc", topic: "paper" })
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(0);
+          expect(articles).toEqual([]);
+        });
+    });
+  });
+  describe("SAD PATHS", () => {
+    test("return 400 - Invalid query when handed invalid sort_by", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({ sort_by: "invalid_sort", order: "asc", topic: undefined })
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("400 - Invalid query");
+        });
+    });
+    test("return 400 - Invalid query when handed invalid order", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({
+          sort_by: "article_id",
+          order: "invalid_order",
+          topic: undefined,
+        })
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("400 - Invalid query");
+        });
+    });
+    test("return 400 - Invalid topic, if topic does not exist, and have valid sort_by and order", () => {
+      return request(app)
+        .get("/api/articles")
+        .query({
+          sort_by: "article_id",
+          order: "asc",
+          topic: "invalid_topic",
+        })
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("400 - Invalid topic");
         });
     });
   });

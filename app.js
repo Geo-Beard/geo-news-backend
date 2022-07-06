@@ -38,8 +38,9 @@ app.use("*", (req, res) => {
 app.use((err, req, res, next) => {
   if (err.code === "22P02" || err.code === "23502") {
     res.status(400).send({ message: "400 - Bad request" });
+  } else {
+    next(err);
   }
-  next(err);
 });
 
 //Custom errors
@@ -54,6 +55,7 @@ app.use((err, req, res, next) => {
 
 //Server errors
 app.use((err, req, res, next) => {
+  console.log(err.code);
   res.status(500).send({ message: "500 - Internal server error" });
 });
 

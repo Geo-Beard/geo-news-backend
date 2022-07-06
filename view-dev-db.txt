@@ -308,3 +308,7 @@ You are now connected to database "nc_news" as user "simon".
         300 | Quia nemo est. Maiores animi architecto ad nihil sapiente. Odio in maxime nam assumenda tempora et nisi. Impedit quidem cum neque libero sequi et et impedit. Dignissimos ut molestiae laborum rerum error distinctio quasi hic consectetur. Odio vel qui necessitatibus perspiciatis ipsum quod excepturi saepe.                                                                |         22 | jessjelly    |    -1 | 2020-02-01 03:22:00
 (300 rows)
 
+ article_id | title | topic | author | body | created_at | votes | comment_count 
+------------+-------+-------+--------+------+------------+-------+---------------
+(0 rows)
+

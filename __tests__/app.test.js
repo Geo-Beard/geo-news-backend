@@ -444,3 +444,21 @@ describe("POST /api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  describe("HAPPY PATHS", () => {
+    test("respond with 204 and no content and delete the given comment by comment_id", () => {
+      return request(app).delete("/api/comments/1").expect(204);
+    });
+  });
+  describe("SAD PATHS", () => {
+    test("responds with 404 - Comment not found, if invalid comment_id", () => {
+      return request(app)
+        .delete("/api/comments/42")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("404 - Comment not found");
+        });
+    });
+  });
+});

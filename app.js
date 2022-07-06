@@ -8,6 +8,7 @@ const {
   getAllArticles,
   getArticleComments,
   postArticleComment,
+  deleteComment,
 } = require("./controllers/index");
 
 app.use(express.json());
@@ -25,6 +26,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.post("/api/articles/:article_id/comments", postArticleComment);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 //ERROR HANDLING
 

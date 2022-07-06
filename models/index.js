@@ -82,22 +82,23 @@ exports.fetchAllArticles = (sort_by = "created_at", order = "desc", topic) => {
 
   queryStr += ` GROUP BY articles.article_id, comments.article_id ORDER BY ${sort_by} ${order};`;
 
-  if (topic) {
-    return db
-      .query("SELECT * FROM topics WHERE slug=$1;", [topic])
-      .then(({ rows }) => {
-        if (rows.length === 0) {
+  return db.query(queryStr, queryValues).then(({ rows }) => {
+    const articleRows = rows;
+    //if no articles but topic - no articles returned but topic
+    if (articleRows.length === 0 && topic) {
+      return db
+        .query("SELECT * FROM topics WHERE slug=$1", [topic])
+        .then(({ rows }) => {
+          const topicRows = rows;
+          if (topicRows[0]) {
+            return articleRows;
+          }
           return Promise.reject({
             status: 400,
             message: "400 - Invalid topic",
           });
-        }
-        return db.query(queryStr, queryValues).then(({ rows }) => {
-          return rows;
         });
-      });
-  }
-  return db.query(queryStr, queryValues).then(({ rows }) => {
+    }
     return rows;
   });
 };

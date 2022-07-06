@@ -55,7 +55,7 @@ app.use((err, req, res, next) => {
 
 //Server errors
 app.use((err, req, res, next) => {
-  console.log(err.code);
+  console.log(err);
   res.status(500).send({ message: "500 - Internal server error" });
 });
 

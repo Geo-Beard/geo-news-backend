@@ -8,6 +8,11 @@ const {
   createArticleComment,
   removeComment,
 } = require("../models/index");
+const endpoints = require("../endpoints.json");
+
+exports.getApi = (req, res, next) => {
+  res.status(200).send({ endpoints });
+};
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()

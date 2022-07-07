@@ -8,7 +8,9 @@
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
     "prepare": "husky install",
-    "view-dev-db": "psql -f db/__view-dev-db___/view-dev-data.sql > view-dev-db.txt"
+    "view-dev-db": "psql -f db/__view-dev-db___/view-dev-data.sql > view-dev-db.txt",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",

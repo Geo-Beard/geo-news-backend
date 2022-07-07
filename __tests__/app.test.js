@@ -3,6 +3,7 @@ const app = require("../app");
 const testData = require("../db/data/test-data");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
+const testEndpoints = require("../endpoints.json");
 require("jest-sorted");
 
 beforeEach(() => {
@@ -21,6 +22,19 @@ describe("GENERAL ERROR HANDLING", () => {
       .then(({ body: { message } }) => {
         expect(message).toBe("404 - Path not found");
       });
+  });
+});
+
+describe("GET /api", () => {
+  describe("HAPPY PATHS", () => {
+    test("responds with JSON describing all available endpoints for API", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body: { endpoints } }) => {
+          expect(endpoints).toEqual(testEndpoints);
+        });
+    });
   });
 });
 
@@ -462,10 +476,10 @@ describe("DELETE /api/comments/:comment_id", () => {
     });
     test("responds with 404 - Path not found if comment_id is not a number", () => {
       return request(app)
-        .get("/api/comments/notanumber")
-        .expect(404)
+        .delete("/api/comments/notanumber")
+        .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("404 - Path not found");
+          expect(message).toBe("400 - Bad request");
         });
     });
   });

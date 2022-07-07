@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const {
+  getApi,
   getTopics,
   getArticle,
   patchArticle,
@@ -12,6 +13,8 @@ const {
 } = require("./controllers/index");
 
 app.use(express.json());
+
+app.get("/api", getApi);
 
 app.get("/api/topics", getTopics);
 

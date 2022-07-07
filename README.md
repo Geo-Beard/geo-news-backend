@@ -94,10 +94,6 @@ In order to run the testing suite run the following:
 
     npm test app
 
-Optional - if you would like to run a third party local connection test:
-
-    npm install nodemon
-
 ### Viewing dev database
 
 If you would like to write test queries to the development database write your SQL queries in:

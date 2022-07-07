@@ -72,7 +72,7 @@ The following dependencies must be installed using npm:
 
 If you would like to host this with heroku the following should be installed:
 
-    sudo snap install --classic heroku
+    npm install -g heroku
 
 ### Seeding local database
 

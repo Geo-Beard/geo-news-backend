@@ -460,5 +460,13 @@ describe("DELETE /api/comments/:comment_id", () => {
           expect(message).toBe("404 - Comment not found");
         });
     });
+    test("responds with 404 - Path not found if comment_id is not a number", () => {
+      return request(app)
+        .get("/api/comments/notanumber")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("404 - Path not found");
+        });
+    });
   });
 });

@@ -1,68 +1,49 @@
 const express = require("express");
 const app = express();
 const {
+  getHomePage,
   getApi,
-  getTopics,
-  getArticle,
-  patchArticle,
-  getUsers,
-  getAllArticles,
-  getArticleComments,
-  postArticleComment,
-  deleteComment,
+  articles,
+  comments,
+  topics,
+  users,
+  errors,
 } = require("./controllers/index");
 
 app.use(express.json());
 
+//ROOT
+app.get("/", getHomePage);
+
+//API
 app.get("/api", getApi);
 
-app.get("/api/topics", getTopics);
+//ARTICLES
+app.get("/api/articles", articles.getAllArticles);
+app.get("/api/articles/:article_id", articles.getArticle);
+app.get("/api/articles/:article_id/comments", articles.getArticleComments);
 
-app.get("/api/articles/:article_id", getArticle);
+app.patch("/api/articles/:article_id", articles.patchArticle);
 
-app.patch("/api/articles/:article_id", patchArticle);
+app.post("/api/articles/:article_id/comments", articles.postArticleComment);
 
-app.get("/api/users", getUsers);
+//COMMENTS
+app.delete("/api/comments/:comment_id", comments.deleteComment);
 
-app.get("/api/articles", getAllArticles);
+//TOPICS
+app.get("/api/topics", topics.getTopics);
 
-app.get("/api/articles/:article_id/comments", getArticleComments);
-
-app.post("/api/articles/:article_id/comments", postArticleComment);
-
-app.delete("/api/comments/:comment_id", deleteComment);
+//USERS
+app.get("/api/users", users.getUsers);
 
 //ERROR HANDLING
 
-//Pathing errors
-app.use("*", (req, res) => {
-  res.status(404).send({ message: "404 - Path not found" });
-});
+app.use("*", errors.handleInvalidPath);
 
-//PSQL errors
+app.use(errors.handlePsqlErrors);
 
-app.use((err, req, res, next) => {
-  if (err.code === "22P02" || err.code === "23502") {
-    res.status(400).send({ message: "400 - Bad request" });
-  } else {
-    next(err);
-  }
-});
+app.use(errors.handleCustomErrors);
 
-//Custom errors
-
-app.use((err, req, res, next) => {
-  if (err.status && err.message) {
-    res.status(err.status).send({ message: `${err.message}` });
-  } else {
-    next(err);
-  }
-});
-
-//Server errors
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send({ message: "500 - Internal server error" });
-});
+app.use(errors.handleServerErrors);
 
 module.exports = app;

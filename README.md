@@ -62,7 +62,7 @@ Inside of which write the following:
 
     PGDATABASE=nc_news
 
-### Installing dev dependencies
+### Installing dependencies
 
 The following dependencies must be installed using npm:
 
@@ -87,8 +87,8 @@ The following dev dependencies should be installed for testing:
 
     npm install -D jest
     npm install -D supertest
+    npm install -D jest-sorted
     npm install pg-format
-    npm install jest-sorted
 
 In order to run the testing suite run the following:
 
@@ -103,3 +103,7 @@ If you would like to write test queries to the development database write your S
 Then run the following script:
 
     npm run view-dev-db
+
+This will output the following:
+
+    view-dev-db.txt

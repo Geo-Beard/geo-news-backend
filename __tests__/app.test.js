@@ -25,6 +25,19 @@ describe("GENERAL ERROR HANDLING", () => {
   });
 });
 
+describe("GET /", () => {
+  describe("HAPPY PATHS", () => {
+    test("responds with Root OK", () => {
+      return request(app)
+        .get("/")
+        .expect(200)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Root OK");
+        });
+    });
+  });
+});
+
 describe("GET /api", () => {
   describe("HAPPY PATHS", () => {
     test("responds with JSON describing all available endpoints for API", () => {

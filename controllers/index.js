@@ -7,7 +7,7 @@ exports.errors = require("../controllers/errors-controllers");
 const endpoints = require("../endpoints.json");
 
 exports.getHomePage = (req, res, next) => {
-  res.status(200).send({ message: "Root OK" });
+  res.status(200).send({ message: "Root OK - for README check /api" });
 };
 
 exports.getApi = (req, res, next) => {

@@ -1,3 +1,4 @@
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const {
@@ -10,6 +11,10 @@ const {
   errors,
 } = require("./controllers/index");
 
+//CORS
+app.use(cors());
+
+//EXPRESS
 app.use(express.json());
 
 //ROOT

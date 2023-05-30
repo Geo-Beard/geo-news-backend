@@ -118,7 +118,12 @@ exports.updateArticle = (article_id, inc_votes) => {
 //POST REQUESTS
 exports.createArticleComment = (article_id, newComment) => {
   const { username, body } = newComment;
-  if (username === undefined || body === undefined) {
+  if (
+    username === undefined ||
+    body === undefined ||
+    username.length === 0 ||
+    body.length === 0
+  ) {
     return Promise.reject({
       status: 400,
       message: "400 - Bad request",
